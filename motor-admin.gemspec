@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.authors     = ['Pete Matsyburka']
   spec.email       = ['pete@getmotoradmin.com']
   spec.summary     = 'Low-code Admin panel and Business intelligence'
-  spec.license     = 'AGPL-3.0'
+  spec.license     = 'MIT'
 
   spec.metadata = {
     'bug_tracker_uri' => 'https://github.com/motor-admin/motor-admin-rails/issues',
@@ -36,6 +36,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency 'cancancan', '~> 3.0'
   spec.add_dependency 'fugit', '~> 1.0'
   spec.add_dependency 'rails', '>= 5.2'
+  spec.add_dependency 'csv', '>= 3.0'
 
   spec.post_install_message = "
     ==================
