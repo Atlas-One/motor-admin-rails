@@ -13,7 +13,7 @@ gem 'mysql2'
 gem 'oj'
 gem 'pg'
 gem 'puma'
-gem 'rails', ENV.fetch('RAILS_VERSION', '>= 0')
+gem 'rails', '>= 7.2.0', ENV.fetch('RAILS_VERSION'
 gem 'tiny_tds'
 
 group :development do
