@@ -6,14 +6,14 @@ gemspec
 
 gem 'activerecord-sqlserver-adapter'
 gem 'bootsnap', require: false
-gem 'devise'
+gem 'devise', '>= 4.9.0'
 gem 'faker'
 gem 'image_processing'
 gem 'mysql2'
 gem 'oj'
 gem 'pg'
 gem 'puma'
-gem 'rails', ENV.fetch('RAILS_VERSION', '>= 0')
+gem 'rails', '>= 7.0.8.4', ENV.fetch('RAILS_VERSION'
 gem 'tiny_tds'
 
 group :development do
@@ -26,7 +26,7 @@ group :development do
 end
 
 group :development, :test do
-  gem 'factory_bot_rails'
+  gem 'factory_bot_rails', '>= 6.3.0'
   gem 'letter_opener'
   gem 'pry-rails'
   gem 'simplecov', require: false
@@ -34,9 +34,9 @@ group :development, :test do
 end
 
 group :test do
-  gem 'capybara'
-  gem 'cuprite'
-  gem 'rspec-rails'
+  gem 'capybara', '>= 3.39.0'
+  gem 'cuprite', '>= 0.15'
+  gem 'rspec-rails', '>= 6.0.2'
   gem 'webmock'
   gem 'webrick'
 end
