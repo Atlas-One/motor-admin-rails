@@ -4,7 +4,7 @@ source 'https://rubygems.org'
 
 gemspec
 
-gem 'activerecord-sqlserver-adapter'
+gem 'activerecord-sqlserver-adapter', '>= 7.1.0'
 gem 'bootsnap', require: false
 gem 'devise'
 gem 'faker'
@@ -13,7 +13,7 @@ gem 'mysql2'
 gem 'oj'
 gem 'pg'
 gem 'puma'
-gem 'rails', ENV.fetch('RAILS_VERSION', '>= 0')
+gem 'rails', '>= 7.1.5.2', ENV.fetch('RAILS_VERSION'
 gem 'tiny_tds'
 
 group :development do
