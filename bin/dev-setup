@@ -1,0 +1,99 @@
+#!/bin/bash
+
+# Motor Admin Rails Development Setup Script
+set -e
+
+echo "🚀 Motor Admin Rails Development Setup"
+echo "======================================"
+
+# Check if Ruby is installed
+if ! command -v ruby &> /dev/null; then
+    echo "❌ Ruby is not installed. Please install Ruby 3.3.1"
+    exit 1
+fi
+
+# Check Ruby version
+RUBY_VERSION=$(ruby -v | cut -d' ' -f2)
+REQUIRED_VERSION="3.3.1"
+if [[ $RUBY_VERSION != *"$REQUIRED_VERSION"* ]]; then
+    echo "⚠️  Ruby version mismatch. Required: $REQUIRED_VERSION, Found: $RUBY_VERSION"
+    echo "   Continue anyway? (y/N)"
+    read -r response
+    if [[ ! "$response" =~ ^[Yy]$ ]]; then
+        exit 1
+    fi
+fi
+
+# Check if Node.js and Yarn are installed
+if ! command -v node &> /dev/null; then
+    echo "❌ Node.js is not installed. Please install Node.js 18+"
+    exit 1
+fi
+
+if ! command -v yarn &> /dev/null; then
+    echo "❌ Yarn is not installed. Please install Yarn package manager"
+    exit 1
+fi
+
+echo "✅ Prerequisites check passed"
+echo ""
+
+# Install Ruby dependencies
+echo "📦 Installing Ruby dependencies..."
+if ! bundle check > /dev/null 2>&1; then
+    bundle install
+else
+    echo "   Ruby dependencies already installed"
+fi
+
+# Install Node.js dependencies
+echo "📦 Installing Node.js dependencies..."
+cd ui
+if [ ! -d "node_modules" ]; then
+    yarn install
+else
+    echo "   Node.js dependencies already installed"
+fi
+cd ..
+
+# Build frontend assets
+echo "🔨 Building frontend assets..."
+cd ui
+if [ ! -d "dist" ] || [ -z "$(ls -A dist 2>/dev/null)" ]; then
+    yarn run build:dev
+else
+    echo "   Frontend assets already built"
+fi
+cd ..
+
+# Generate gzipped assets
+echo "🗜️  Generating gzipped assets..."
+if command -v gzip &> /dev/null; then
+    find ui/dist -name "*.js" -o -name "*.css" -o -name "*.svg" | while read -r file; do
+        if [[ ! -f "${file}.gz" ]]; then
+            gzip -k "$file"
+        fi
+    done
+    echo "   Gzipped assets generated"
+else
+    echo "   ⚠️  gzip not found, skipping asset compression"
+fi
+
+# Setup development database
+echo "🗄️  Setting up development database..."
+if [ ! -f "spec/dummy/db/development.sqlite3" ]; then
+    rake app:db:create app:db:setup
+else
+    echo "   Development database already exists"
+fi
+
+echo ""
+echo "🎉 Setup completed successfully!"
+echo ""
+echo "To start the development server:"
+echo "  DATABASE_TYPE=sqlite rails server"
+echo ""
+echo "Or use Docker:"
+echo "  docker-compose up"
+echo ""
+echo "The application will be available at http://localhost:3000"

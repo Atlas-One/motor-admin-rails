@@ -1,5 +1,10 @@
+// Import Bootstrap first to establish base variables
+@import 'utils/styles/bootstrap';
+
+// Import custom variables after Bootstrap
 @import 'utils/styles/variables';
 
+// Import View3 UI framework styles
 @import 'view3/src/styles/custom';
 @import 'view3/src/styles/mixins/index';
 @import 'view3/src/styles/common/base';

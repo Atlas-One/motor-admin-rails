@@ -1,6 +1,6 @@
 <template>
   <MSelect
-    v-model="modelValue"
+    :model-value="modelValue"
     filterable
     :options="options"
     :with-deselect="false"

@@ -1,5 +1,6 @@
 import 'index.scss'
-import 'utils/styles/bootstrap.scss'
+// Bootstrap is now imported in index.scss to avoid conflicts
+// import 'utils/styles/bootstrap.scss'
 
 import 'scroll-behavior-polyfill'
 

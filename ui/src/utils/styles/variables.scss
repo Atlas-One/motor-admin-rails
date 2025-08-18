@@ -7,6 +7,9 @@ $font-size-small: 12px;
 $font-size-large: $font-size-base;
 $border-color-base: #dcdee2;
 
+// Ensure a concrete color for Bootstrap border to avoid passing a CSS var into Sass color functions used by view3
+$border-color: #dee2e6;
+
 $spin-dot-size-small: 22px;
 $spin-dot-size: 30px;
 $spin-dot-size-large: 42px;

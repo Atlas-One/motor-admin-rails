@@ -194,23 +194,245 @@ end
 
 ## Development
 
-Start webpack dev server:
+### Prerequisites
+
+- Ruby 3.3.1 (see `.ruby-version`)
+- Node.js (v18+ recommended)
+- Yarn package manager
+- SQLite3 (for development)
+
+### Quick Start
+
+#### Option 1: Docker (Recommended)
+
+The easiest way to get started is using Docker:
 
 ```bash
-yarn install && yarn serve
+docker-compose up
 ```
 
-Setup development database:
+This will:
+- Install all Ruby and Node.js dependencies (only if needed)
+- Build frontend assets (only if needed)
+- Generate required gzipped assets
+- Start the Rails server on http://localhost:3000
+
+**Smart Setup:** The Docker setup is intelligent - it only installs dependencies and builds assets when needed, making subsequent runs much faster.
+
+**Optional Helper Commands:**
+```bash
+./bin/docker-dev start    # Same as docker-compose up
+./bin/docker-dev build    # Force rebuild image
+./bin/docker-dev clean    # Clean up Docker resources
+./bin/docker-dev logs     # View application logs
+./bin/docker-dev shell    # Open shell in container
+```
+
+#### Option 2: Manual Setup
+
+Use the provided setup script:
 
 ```bash
-rake app:db:create && rake app:db:setup
+./bin/dev-setup
 ```
 
-Start example application in development mode:
+Then start the server:
 
 ```bash
-MOTOR_DEVELOPMENT=true rails s
+DATABASE_TYPE=sqlite rails server
 ```
+
+#### Option 3: Manual Step-by-Step
+
+1. Install dependencies:
+   ```bash
+   bundle install
+   cd ui && yarn install && cd ..
+   ```
+
+2. Build frontend assets:
+   ```bash
+   cd ui && yarn run build:dev && cd ..
+   ```
+
+3. Generate gzipped assets:
+   ```bash
+   find ui/dist -name "*.js" -o -name "*.css" -o -name "*.svg" | xargs -I {} gzip -k {}
+   ```
+
+4. Setup database:
+   ```bash
+   rake app:db:create app:db:setup
+   ```
+
+5. Start server:
+   ```bash
+   DATABASE_TYPE=sqlite rails server
+   ```
+
+### Development Modes
+
+#### Production-like Development
+
+This mode serves pre-built assets from disk (recommended for most development):
+
+```bash
+DATABASE_TYPE=sqlite rails server
+```
+
+#### Hot Reloading Development
+
+For frontend development with live reloading:
+
+1. Start webpack dev server:
+   ```bash
+   cd ui && yarn serve
+   ```
+
+2. In another terminal, start Rails server:
+   ```bash
+   MOTOR_DEVELOPMENT=true DATABASE_TYPE=sqlite rails server
+   ```
+
+### Docker Profiles
+
+The docker-compose.yml includes several profiles for different scenarios:
+
+#### Default Profile (Production-like)
+```bash
+docker-compose up
+# Starts on http://localhost:3000
+```
+
+#### Development Profile (Hot Reloading)
+```bash
+docker-compose --profile dev up dev
+# Starts on http://localhost:3001
+# Webpack dev server on http://localhost:9090
+```
+
+#### With PostgreSQL
+```bash
+docker-compose --profile postgres up app postgres
+```
+
+#### With MySQL
+```bash
+docker-compose --profile mysql up app mysql
+```
+
+### Frontend Development
+
+#### Building Assets
+
+- Development build: `cd ui && yarn run build:dev`
+- Production build: `cd ui && yarn run build:prod`
+- Test build: `cd ui && yarn run build:test`
+
+#### Asset Structure
+
+- Source files: `ui/src/`
+- Built assets: `ui/dist/`
+- Webpack config: `ui/webpack.config.js`
+
+#### Important Notes
+
+1. **Asset Location**: Motor Admin serves assets directly from `ui/dist/`, not from a `public/` folder. The gem's asset serving is handled by the `Motor::Assets` module.
+
+2. **Gzipped Assets**: The Rails app expects gzipped versions of assets when not in development mode. Always run the gzip command after building assets.
+
+3. **Asset Manifest**: The `ui/dist/manifest.json` file maps asset names to their hashed filenames.
+
+4. **Icons**: SVG icons are served from `ui/dist/icons/` and also need gzipped versions.
+
+5. **Public Folder**: If a `public/` folder is created during development, it should NOT be committed to version control. It's added to `.gitignore` to prevent accidental inclusion.
+
+### Database Support
+
+Motor Admin Rails supports multiple databases:
+
+- **SQLite** (default): `DATABASE_TYPE=sqlite`
+- **PostgreSQL**: Set up connection in `config/database.yml`
+- **MySQL**: Set up connection in `config/database.yml`
+- **SQL Server**: Requires `activerecord-sqlserver-adapter` gem
+
+### Environment Variables
+
+Key environment variables for development:
+
+- `DATABASE_TYPE`: Database type (sqlite, postgresql, mysql)
+- `MOTOR_DEVELOPMENT`: Enable development mode (hot reloading)
+- `RAILS_ENV`: Rails environment (development, test, production)
+- `RAILS_LOG_LEVEL`: Logging level (debug, info, warn, error)
+
+### Troubleshooting
+
+#### Common Issues
+
+1. **500 errors for assets**: Missing gzipped versions
+   ```bash
+   find ui/dist -name "*.js" -o -name "*.css" -o -name "*.svg" | xargs -I {} gzip -k {}
+   ```
+
+2. **node-sass errors**: Use Node.js 18+ and ensure `sass` package is installed
+   ```bash
+   cd ui && yarn add -D sass && yarn remove node-sass
+   ```
+
+3. **Missing Babel plugins**: Install required plugins
+   ```bash
+   cd ui && yarn add -D @babel/plugin-syntax-dynamic-import
+   ```
+
+4. **ActiveRecord errors**: Ensure database is set up correctly
+   ```bash
+   rake app:db:create app:db:setup
+   ```
+
+#### Asset Debugging
+
+To debug asset issues:
+
+1. Check if assets exist: `ls -la ui/dist/`
+2. Check manifest: `cat ui/dist/manifest.json`
+3. Check gzipped versions: `ls -la ui/dist/*.gz ui/dist/icons/*.gz`
+4. Check Rails logs for asset request errors
+
+#### Docker Issues
+
+- **Build cache issues**: Use `docker-compose build --no-cache`
+- **Permission issues**: Ensure files are readable by the docker user
+- **Port conflicts**: Check if ports 3000/3001/9090 are available
+
+### Testing
+
+Run the test suite:
+
+```bash
+bundle exec rspec
+```
+
+For frontend testing:
+
+```bash
+cd ui && yarn test  # if test script exists
+```
+
+### Contributing
+
+When contributing:
+
+1. Ensure all tests pass
+2. Build and test assets work correctly
+3. Update documentation if needed
+4. Follow existing code style and patterns
+
+### Additional Resources
+
+- [Motor Admin Documentation](https://www.getmotoradmin.com/ruby-on-rails)
+- [Rails Guides](https://guides.rubyonrails.org/)
+- [Vue.js Documentation](https://vuejs.org/guide/)
+- [Webpack Documentation](https://webpack.js.org/concepts/)
 
 ## License
 

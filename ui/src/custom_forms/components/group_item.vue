@@ -37,10 +37,11 @@
                 </div>
               </div>
               <FormItems
-                v-model:form-data="formData[index]"
+                :form-data="formData[index]"
                 :items="item.items"
                 :variables-data="{ ...variablesData, ...formData[index] }"
                 :prop-prefix="propPrefix ? `${propPrefix}.${index}` : `${item.name}.${index}`"
+                @update:form-data="val => { const next = [...formData]; next[index] = val; $emit('update:form-data', next) }"
               />
             </div>
           </div>
@@ -60,10 +61,11 @@
         </VueDraggableNext>
         <FormItems
           v-else
-          v-model:form-data="formData"
+          :form-data="formData"
           :items="item.items"
           :variables-data="{ ...variablesData, ...formData }"
           :prop-prefix="propPrefix ? propPrefix : item.name"
+          @update:form-data="$emit('update:form-data', $event)"
         />
       </template>
     </Panel>
@@ -101,6 +103,7 @@ export default {
       required: true
     }
   },
+  emits: ['update:form-data'],
   methods: {
     buildDefaultValues
   }

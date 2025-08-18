@@ -7,5 +7,5 @@ class Note < ApplicationRecord
 
   attribute :sentiment, :integer, default: 0
 
-  enum sentiment: %i[negative neutral positive]
+  enum :sentiment, { negative: 0, neutral: 1, positive: 2 }
 end

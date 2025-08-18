@@ -1,0 +1,130 @@
+services:
+  app:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - RAILS_ENV=development
+      - DATABASE_TYPE=sqlite
+      - RAILS_LOG_LEVEL=info
+      - BUNDLE_PATH=/app/vendor/bundle
+    volumes:
+      - .:/app
+      - bundle_cache:/app/vendor/bundle
+      - node_modules_cache:/app/ui/node_modules
+      - assets_cache:/app/ui/dist
+    working_dir: /app
+    # user: "1000:1000"  # Disabled for macOS compatibility
+    command: >
+      bash -c "
+        echo '🚀 Starting Motor Admin Rails...' &&
+        
+        # Smart dependency installation - only if needed
+        if [ ! -d 'vendor/bundle' ] || [ ! -f 'vendor/bundle/.bundle_complete' ]; then
+          echo '📦 Installing Ruby dependencies...'
+          bundle install --jobs $(nproc) --retry 3
+          touch vendor/bundle/.bundle_complete
+        else
+          echo '⚡ Ruby dependencies already installed, skipping...'
+        fi
+        
+        if [ ! -d 'ui/node_modules' ] || [ ! -f 'ui/node_modules/.yarn_complete' ]; then
+          echo '📦 Installing Node.js dependencies...'
+          cd ui && yarn install --frozen-lockfile && touch node_modules/.yarn_complete && cd ..
+        else
+          echo '⚡ Node.js dependencies already installed, skipping...'
+        fi
+        
+        # Always rebuild assets to ensure correct hashes
+        echo '🔨 Building frontend assets...'
+        # Clear any cached assets first
+        rm -rf ui/dist/*
+        cd ui && yarn run build:dev && cd ..
+
+        # Generate gzipped assets
+        echo '🗜️ Generating gzipped assets...'
+        find ui/dist -name '*.js' -o -name '*.css' -o -name '*.svg' | xargs -I {} sh -c 'test ! -f "{}.gz" && gzip -k "{}" 2>/dev/null || true'
+
+        echo '✅ Assets built successfully!'
+        
+        echo '✅ Setup complete! Starting Rails server on http://localhost:3000'
+        bundle exec rails server -b 0.0.0.0 -p 3000
+      "
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:3000 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # Development service with hot reloading (optional)
+  dev:
+    build: .
+    ports:
+      - "3001:3000"
+      - "9090:9090"  # Webpack dev server
+    environment:
+      - RAILS_ENV=development
+      - DATABASE_TYPE=sqlite
+      - MOTOR_DEVELOPMENT=true
+      - RAILS_LOG_LEVEL=debug
+    volumes:
+      - .:/app
+      - /app/ui/node_modules
+      - /app/vendor/bundle
+    working_dir: /app
+    command: >
+      bash -c "
+        echo 'Setting up Motor Admin Rails with hot reloading...' &&
+        bundle install &&
+        cd ui &&
+        yarn install &&
+        # Clear any cached assets and rebuild
+        rm -rf dist/* &&
+        yarn run build:dev &&
+        cd .. &&
+        # Start webpack dev server in background
+        (cd ui && yarn serve) &
+        # Start Rails server
+        bundle exec rails server -b 0.0.0.0 -p 3000
+      "
+    profiles:
+      - dev
+
+  # Database service (if you prefer PostgreSQL)
+  postgres:
+    image: postgres:15
+    environment:
+      - POSTGRES_USER=motor_admin
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=motor_admin_development
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    profiles:
+      - postgres
+
+  # Database service (if you prefer MySQL)
+  mysql:
+    image: mysql:8.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=motor_admin_development
+      - MYSQL_USER=motor_admin
+      - MYSQL_PASSWORD=password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    profiles:
+      - mysql
+
+volumes:
+  postgres_data:
+  mysql_data:
+  bundle_cache:
+  node_modules_cache:
+  assets_cache:

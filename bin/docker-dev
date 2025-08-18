@@ -1,0 +1,72 @@
+#!/bin/bash
+
+# Motor Admin Rails Docker Development Helper
+set -e
+
+echo "🐳 Motor Admin Rails Docker Helper"
+echo "================================="
+
+# Function to check if Docker is running
+check_docker() {
+    if ! docker info > /dev/null 2>&1; then
+        echo "❌ Docker is not running. Please start Docker Desktop."
+        exit 1
+    fi
+}
+
+# Function to build the image if it doesn't exist
+ensure_image() {
+    if ! docker images | grep -q motor-admin-rails; then
+        echo "📦 Building Docker image (first time setup)..."
+        docker-compose build --no-cache
+    fi
+}
+
+# Function to show help
+show_help() {
+    echo "Usage: $0 [OPTION]"
+    echo ""
+    echo "Options:"
+    echo "  start, up     Start the application (default)"
+    echo "  build         Force rebuild the Docker image"
+    echo "  clean         Clean up Docker volumes and images"
+    echo "  logs          Show application logs"
+    echo "  shell         Open a shell in the container"
+    echo "  help          Show this help message"
+}
+
+# Parse command line arguments
+case "${1:-start}" in
+    "start"|"up")
+        check_docker
+        ensure_image
+        echo "🚀 Starting Motor Admin Rails..."
+        docker-compose up
+        ;;
+    "build")
+        check_docker
+        echo "🔨 Building Docker image..."
+        docker-compose build --no-cache
+        ;;
+    "clean")
+        check_docker
+        echo "🧹 Cleaning up Docker resources..."
+        docker-compose down -v
+        docker system prune -f
+        echo "✅ Cleanup complete"
+        ;;
+    "logs")
+        docker-compose logs -f app
+        ;;
+    "shell")
+        docker-compose exec app bash
+        ;;
+    "help"|"-h"|"--help")
+        show_help
+        ;;
+    *)
+        echo "❌ Unknown option: $1"
+        show_help
+        exit 1
+        ;;
+esac
