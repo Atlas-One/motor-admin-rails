@@ -36,7 +36,7 @@ end
 group :test do
   gem 'capybara'
   gem 'cuprite'
-  gem 'rspec-rails'
+  gem 'rspec-rails', '>= 8.0.0'
   gem 'webmock'
   gem 'webrick'
 end
