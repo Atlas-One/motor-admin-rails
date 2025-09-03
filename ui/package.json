@@ -21,9 +21,9 @@
     "photoswipe": "^5",
     "qs": "^6.10.3",
     "scroll-behavior-polyfill": "^2.0.13",
-    "trix": "^1.3.1",
+    "trix": "^2.1.15",
     "view3": "https://github.com/omohokcoj/view3#motor-admin",
-    "vue": "^3.2.0",
+    "vue": "^3.5.14",
     "vue-draggable-next": "^2.1.1",
     "vue-router": "^4.0.15",
     "vue3-ace-editor": "^2.2.2"
