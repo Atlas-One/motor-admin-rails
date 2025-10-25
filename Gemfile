@@ -37,7 +37,7 @@ group :test do
   gem 'capybara'
   gem 'cuprite'
   gem 'rspec-rails'
-  gem 'webmock'
+  gem 'webmock', '>= 3.25.2'
   gem 'webrick'
 end
 
