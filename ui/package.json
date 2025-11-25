@@ -7,7 +7,7 @@
     "@rails/activestorage": "^7.0.8",
     "@tabler/icons": "^1.68.0",
     "ace-builds": "^1.43.2",
-    "axios": "^0.27.2",
+    "axios": "^1.12.0",
     "bootstrap": "5.1.3",
     "chart.js": "^3.8.0",
     "chartjs-plugin-datalabels": "^2.0.0",
