@@ -14,7 +14,6 @@ services:
       - .:/app
       - bundle_cache:/app/vendor/bundle
       - node_modules_cache:/app/ui/node_modules
-      - assets_cache:/app/ui/dist
     working_dir: /app
     # user: "1000:1000"  # Disabled for macOS compatibility
     command: >
@@ -41,11 +40,11 @@ services:
         echo '🔨 Building frontend assets...'
         # Clear any cached assets first
         rm -rf ui/dist/*
-        cd ui && yarn run build:dev && cd ..
+        cd ui && NODE_ENV=production yarn run build:prod && cd ..
 
         # Generate gzipped assets
         echo '🗜️ Generating gzipped assets...'
-        find ui/dist -name '*.js' -o -name '*.css' -o -name '*.svg' | xargs -I {} sh -c 'test ! -f "{}.gz" && gzip -k "{}" 2>/dev/null || true'
+        find ui/dist -name '*.js' -o -name '*.css' -o -name '*.svg' | xargs -I {} sh -c 'test ! -f \"{}.gz\" && gzip -k \"{}\" 2>/dev/null || true'
 
         echo '✅ Assets built successfully!'
         
@@ -127,4 +126,3 @@ volumes:
   mysql_data:
   bundle_cache:
   node_modules_cache:
-  assets_cache:

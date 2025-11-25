@@ -9,11 +9,15 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libmariadb-dev-compat \
     curl \
     git \
+    openssh-client \
     && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y nodejs \
     && npm install -g yarn \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+
+# Configure Git to use HTTPS instead of SSH for GitHub
+RUN git config --global url."https://github.com/".insteadOf "ssh://git@github.com/"
 
 # Set working directory
 WORKDIR /app
