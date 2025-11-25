@@ -1,6 +1,6 @@
 <template>
   <div class="ivu-menu ivu-menu-primary ivu-menu-horizontal row m-0">
-    <div class="col-10 d-flex align-items-center">
+    <div class="col-12 col-md-7 col-lg-8 d-flex align-items-center">
       <VButton
         :to="{ name: 'home' }"
         type="primary"
@@ -68,7 +68,7 @@
         />
       </template>
     </div>
-    <div class="col-2 d-flex justify-content-end align-items-center">
+    <div class="col-12 col-md-5 col-lg-4 d-flex justify-content-end align-items-center flex-wrap">
       <Dropdown
         v-if="currentUser?.email"
         trigger="click"
@@ -256,7 +256,7 @@ import { modelSlugMap, modelNameMap } from 'data_resources/scripts/schema'
 import { linksStore } from '../scripts/links_store'
 import { basePath, adminSettingsPath, isStandalone } from 'utils/scripts/configs'
 import { widthLessThan } from 'utils/scripts/dimensions'
-import { isShowSettings, toggleSettings } from 'settings/scripts/toggle'
+import { isShowSettings, toggleSettings, closeSettings } from 'settings/scripts/toggle'
 import { openSettingsDrawer } from 'settings/scripts/drawer'
 import { currentUser } from 'navigation/scripts/user_store'
 import { canVisit } from '../scripts/can_visit'
@@ -405,7 +405,7 @@ export default {
     },
     onSettingsClick () {
       if (this.isShowSettings) {
-        return toggleSettings()
+        return closeSettings()
       }
 
       if (['resources'].includes(this.$route.name) && !widthLessThan('sm')) {
@@ -419,6 +419,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.ivu-menu-horizontal {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+}
+
 :deep(.ivu-badge-count) {
   top: 0
 }
@@ -428,6 +434,7 @@ export default {
   font-weight: 500;
   display: flex;
   align-items: center;
+  white-space: nowrap;
 
   .ion {
     vertical-align: sub;
@@ -458,5 +465,9 @@ export default {
   .ion-md-notifications {
     font-size: 22px;
   }
+}
+
+.add-item-btn {
+  flex-shrink: 0;
 }
 </style>

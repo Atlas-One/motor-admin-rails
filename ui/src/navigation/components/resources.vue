@@ -63,7 +63,7 @@ export default {
       if (this.size === 'small') {
         return ''
       } else {
-        return 'fs-4'
+        return ''
       }
     }
   }

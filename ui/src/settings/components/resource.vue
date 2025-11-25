@@ -4,6 +4,7 @@
       v-model="selectedTab"
       :position="'center'"
       :tabs="[
+        { label: i18n['query_editor'], value: 'query_editor' },
         { label: i18n['columns'], value: 'columns' },
         { label: i18n['actions'], value: 'actions' },
         { label: i18n['tabs'], value: 'tabs' },
@@ -11,27 +12,13 @@
         { label: i18n['associations'], value: 'associations' }
       ]"
     />
+    <ResourceQueryForm
+      v-if="selectedTab === 'query_editor'"
+      :resource="resource"
+    />
     <template
       v-if="selectedTab === 'columns'"
     >
-      <Collapse
-        v-model="collapseValue"
-        simple
-        class="mb-3"
-        style="margin: 0 -16px"
-      >
-        <Panel name="1">
-          {{ i18n.query_editor }}
-          <template #content>
-            <ResourceQueryForm
-              v-if="collapseValue.includes('1')"
-              :resource="resource"
-              @close="collapseValue = []"
-            />
-          </template>
-        </Panel>
-      </Collapse>
-
       <Collapse
         v-model="collapseValue"
         simple

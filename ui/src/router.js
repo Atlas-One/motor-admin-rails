@@ -10,6 +10,7 @@ import NotificationsIndex from 'notifications/pages/index'
 import FormsShow from 'custom_forms/pages/show'
 import DashboardsShow from 'dashboards/pages/show'
 import AlertsShow from 'alerts/pages/show'
+import ResourceSettingsPage from 'settings/pages/resource_settings'
 
 const routes = [
   {
@@ -81,6 +82,11 @@ const routes = [
     path: '/reports/:type?',
     component: ReportsIndex,
     name: 'reports'
+  },
+  {
+    path: '/settings/resources/:resource_name',
+    component: ResourceSettingsPage,
+    name: 'resource_settings'
   }
 ]
 

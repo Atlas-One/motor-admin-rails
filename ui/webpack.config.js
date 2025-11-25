@@ -109,13 +109,32 @@ module.exports = (env = {}) => ({
     (env.production || env.test) && new CompressionPlugin({ test: /\.(js|css|svg)(\?.*)?$/i }),
     process.env.BUNDLE_ANALYZE && new BundleAnalyzerPlugin()
   ].filter(Boolean),
+  ignoreWarnings: [
+    {
+      module: /index\.scss/,
+      message: /autoprefixer.*color-adjust/
+    }
+  ],
   devServer: {
-    port: 9090,
-    hot: false,
+    host: '0.0.0.0',
+    port: 9096,
+    hot: true,
+    liveReload: true,
+    allowedHosts: 'all',
+    headers: {
+      'Access-Control-Allow-Origin': '*'
+    },
     client: {
       logging: 'info',
       overlay: true,
-      progress: true
+      progress: true,
+      webSocketURL: {
+        hostname: 'localhost',
+        port: 9096
+      }
+    },
+    devMiddleware: {
+      writeToDisk: true
     }
   }
 })

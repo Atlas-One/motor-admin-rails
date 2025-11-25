@@ -55,6 +55,17 @@ export default {
             id: this.preferences[`${this.settingsType}_id`]
           }
         })
+      } else if (this.resource) {
+        // Navigate to full-screen resource settings page
+        this.$router.push({
+          name: 'resource_settings',
+          params: {
+            resource_name: this.resource.name
+          },
+          query: {
+            tab: this.settingsType || 'query_editor'
+          }
+        })
       } else {
         openSettingsDrawer({
           selectedResource: this.resource,

@@ -6,7 +6,7 @@ module Motor
 
     ASSETS_PATH = Pathname.new(__dir__).join('../../ui/dist')
     MANIFEST_PATH = ASSETS_PATH.join('manifest.json')
-    DEV_SERVER_URL = 'http://localhost:9090/'
+    DEV_SERVER_URL = ENV.fetch('MOTOR_DEV_SERVER_URL', 'http://localhost:9096/')
 
     CACHE_STORE =
       if Rails.env.production?

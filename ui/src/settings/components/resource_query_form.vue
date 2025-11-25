@@ -1,45 +1,39 @@
 <template>
-  <div>
-    <CodeEditor
-      v-model="sqlBody"
-      style="height: 140px"
-
-      :autofocus="true"
-      language="pgsql"
-      placeholder="SELECT * FROM ..."
-      @run="runQuery"
-    />
-    <div
-      style="height: 190px"
-      class="pb-2 position-relative"
-    >
-      <Spin
-        v-if="isLoading"
-        fix
-      />
-      <div
-        v-else-if="!data.length && !errors.length"
-        class="d-flex justify-content-center align-items-center"
-        style="height: 100%"
-      >
-        {{ i18n.no_data }}
-      </div>
-      <QueryResult
-        v-if="(data.length || errors.length)"
-        :data="data"
-        :errors="errors"
-        :columns="columns"
-        :with-footer="false"
+  <div class="query-editor-container">
+    <div class="editor-section">
+      <CodeEditor
+        v-model="sqlBody"
+        :style="{ height: '100%' }"
+        :autofocus="true"
+        language="pgsql"
+        placeholder="SELECT * FROM ..."
+        @run="runQuery"
       />
     </div>
-    <div class="d-flex justify-content-between">
-      <div>
-        <VButton
-          class="me-2"
-          @click="$emit('close')"
+    <div class="results-section">
+      <div class="results-content position-relative">
+        <Spin
+          v-if="isLoading"
+          fix
+        />
+        <div
+          v-else-if="!data.length && !errors.length"
+          class="d-flex justify-content-center align-items-center"
+          style="height: 100%"
         >
-          {{ i18n.cancel }}
-        </VButton>
+          {{ i18n.no_data }}
+        </div>
+        <QueryResult
+          v-if="(data.length || errors.length)"
+          :data="data"
+          :errors="errors"
+          :columns="columns"
+          :with-footer="false"
+        />
+      </div>
+    </div>
+    <div class="actions-bar d-flex justify-content-between">
+      <div>
         <VButton
           type="error"
           ghost
@@ -185,3 +179,40 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.query-editor-container {
+  display: flex;
+  flex-direction: column;
+  height: calc(100vh - 200px);
+  min-height: 600px;
+}
+
+.editor-section {
+  height: 70%;
+  border: 1px solid #dcdee2;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 10px;
+}
+
+.results-section {
+  height: 30%;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+}
+
+.results-content {
+  flex: 1;
+  overflow: auto;
+  border: 1px solid #dcdee2;
+  border-radius: 4px;
+  padding: 10px;
+}
+
+.actions-bar {
+  padding: 10px 0;
+  border-top: 1px solid #dcdee2;
+}
+</style>
