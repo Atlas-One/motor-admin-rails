@@ -78,8 +78,8 @@ export default {
 <style lang="scss" scoped>
 .resource-settings-page {
   padding: 20px;
-  max-width: 1200px;
-  margin: 0 auto;
+  width: 100%;
+  height: 100%;
 }
 
 .settings-header {
@@ -100,6 +100,7 @@ export default {
   background: white;
   border-radius: 4px;
   padding: 20px;
+  width: 100%;
 }
 </style>
 
